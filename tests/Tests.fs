@@ -10,14 +10,17 @@ open Microsoft.AspNetCore.Builder
 open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.DependencyInjection
 
+let configureAppConfig (app: IConfigurationBuilder) =
+  app.AddJsonFile("appsettings.tests.json") |> ignore
+  ()
 
 let createTestHost () =
   WebHostBuilder()
     .UseTestServer()
-    .Configure(configureApp)
-    .ConfigureServices(configureServices)
+    .ConfigureAppConfiguration(configureAppConfig)   // Use the test's config
+    .Configure(configureApp)    // from the "Site" project
+    .ConfigureServices(configureServices)   // from the "Site" project
     
-
 [<Fact>]
 let ``My test`` () =
     task {
@@ -29,7 +32,11 @@ let ``My test`` () =
         use! response = client.SendAsync msg
         let! content = response.Content.ReadAsStringAsync()
 
-        let expected = "hello test"
+        let config = server.Services.GetService(typeof<IConfiguration>) :?> IConfiguration
+
+        let expectedNumber = config.["MySite:MyValue"] |> int
+
+        let expected = sprintf "hello world %d" expectedNumber
 
         Assert.Equal(expected, content)
     }

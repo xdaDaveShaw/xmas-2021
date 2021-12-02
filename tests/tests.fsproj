@@ -30,4 +30,8 @@
     <ProjectReference Include="..\site\site.fsproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="appsettings.tests.json" CopyToOutputDirectory="always" />
+  </ItemGroup>
+
 </Project>
