@@ -12,12 +12,23 @@ open Microsoft.Extensions.Options
 [<CLIMutable>]
 type Settings = { MyValue: int }
 
+type IMyService =
+    abstract member GetNumber : unit -> int
+
+type RealMyService() =
+    interface IMyService with
+        member _.GetNumber() = 42
+
 let demo = 
     fun (next : HttpFunc) (ctx : HttpContext) ->
 
         let settings = ctx.GetService<IOptions<Settings>>()
+        let myService = ctx.GetService<IMyService>()
 
-        let greeting = sprintf "hello world %d" settings.Value.MyValue
+        let configNo = settings.Value.MyValue
+        let serviceNo = myService.GetNumber()
+
+        let greeting = sprintf "hello world %d %d" configNo serviceNo
         text greeting next ctx
 
 let webApp =
@@ -33,6 +44,8 @@ let configureApp (app : IApplicationBuilder) =
 let configureServices (services : IServiceCollection) =
 
     services.AddGiraffe() |> ignore
+
+    services.AddSingleton<IMyService>(new RealMyService()) |> ignore
 
     let serviceProvider = services.BuildServiceProvider()
     let settings = serviceProvider.GetService<IConfiguration>()

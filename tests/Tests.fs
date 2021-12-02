@@ -14,12 +14,23 @@ let configureAppConfig (app: IConfigurationBuilder) =
   app.AddJsonFile("appsettings.tests.json") |> ignore
   ()
 
+let luckyNumber = 8
+
+type FakeMyService() =
+    interface IMyService with
+        member _.GetNumber() = luckyNumber
+
+let configureTestServices (services: IServiceCollection) = 
+  services.AddSingleton<IMyService>(new FakeMyService()) |> ignore
+  ()
+
 let createTestHost () =
   WebHostBuilder()
     .UseTestServer()
     .ConfigureAppConfiguration(configureAppConfig)   // Use the test's config
     .Configure(configureApp)    // from the "Site" project
     .ConfigureServices(configureServices)   // from the "Site" project
+    .ConfigureServices(configureTestServices) // mock services after real ones
     
 [<Fact>]
 let ``My test`` () =
@@ -36,7 +47,7 @@ let ``My test`` () =
 
         let expectedNumber = config.["MySite:MyValue"] |> int
 
-        let expected = sprintf "hello world %d" expectedNumber
+        let expected = sprintf "hello world %d %d" expectedNumber luckyNumber
 
         Assert.Equal(expected, content)
     }
