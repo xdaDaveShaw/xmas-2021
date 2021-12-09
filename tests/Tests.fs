@@ -43,7 +43,7 @@ let ``My test`` () =
 
         let config = server.Services.GetService(typeof<IConfiguration>) :?> IConfiguration
 
-        let expectedNumber = config.["MySite:MyValue"] |> int
+        let expectedNumber = config["MySite:MyValue"] |> int
 
         let expected = sprintf "hello world %d %d" expectedNumber luckyNumber
 
