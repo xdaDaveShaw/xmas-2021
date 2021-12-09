@@ -6,8 +6,8 @@ open Microsoft.AspNetCore.Hosting
 open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.Hosting
 open Microsoft.Extensions.DependencyInjection
-open Giraffe
 open Microsoft.Extensions.Options
+open Giraffe
 
 [<CLIMutable>]
 type Settings = { MyValue: int }
