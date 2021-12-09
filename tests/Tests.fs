@@ -5,8 +5,6 @@ open System.Net.Http
 open Xunit
 open Microsoft.AspNetCore.Hosting
 open Microsoft.AspNetCore.TestHost
-open System
-open Microsoft.AspNetCore.Builder
 open Microsoft.Extensions.Configuration
 open Microsoft.Extensions.DependencyInjection
 
